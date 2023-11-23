@@ -1,0 +1,26 @@
+{
+  "bindings": [
+    {
+      "name": "changes",
+      "type": "sqlTrigger",
+      "direction": "in",
+      "tableName": "sensors",
+      "connectionStringSetting": "SqlConnectionString"
+    },
+    {
+      "name": "readings",
+      "type": "sql",
+      "direction": "in",
+      "commandText": "select * from sensors",
+      "connectionStringSetting": "SqlConnectionString"
+    },
+    {
+      "name": "analytics",
+      "type": "sql",
+      "direction": "out",
+      "commandText": "analytics",
+      "connectionStringSetting": "SqlConnectionString"
+    }
+  ],
+  "disabled": false
+}
