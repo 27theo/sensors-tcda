@@ -21,5 +21,3 @@ def main(changes, readings: func.SqlRowList, analytics: func.Out[func.SqlRow]):
         rows.append(common.analysis.AnalysisEntry(id, temperature, wind_speed, relative_humidity, co2))
 
     analytics.set(rows)
-
-    logging.info("Wrote analytics to database.")

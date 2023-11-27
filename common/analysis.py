@@ -25,15 +25,16 @@ def analyse(readings: func.SqlRowList) -> dict:
 		item = row.data
 		id = item["sensor_id"]
 
-		if item["sensor_id"] not in calcs:
+		if id not in calcs:
 			calcs[id] = {f: dict(total=0, minimum=9999, maximum=0, readings=0) for f in FIELDS}
-			for field in FIELDS:
-				calcs[id][field]["readings"] += 1
-				calcs[id][field]["total"] += item[field]
-				if item[field] < calcs[id][field]["minimum"]:
-					calcs[id][field]["minimum"] = item[field]
-				if item[field] > calcs[id][field]["maximum"]:
-					calcs[id][field]["maximum"] = item[field]
+		
+		for field in FIELDS:
+			calcs[id][field]["readings"] += 1
+			calcs[id][field]["total"] += item[field]
+			if item[field] < calcs[id][field]["minimum"]:
+				calcs[id][field]["minimum"] = item[field]
+			if item[field] > calcs[id][field]["maximum"]:
+				calcs[id][field]["maximum"] = item[field]
 
 	# Calculate averages
 	for id in calcs:
