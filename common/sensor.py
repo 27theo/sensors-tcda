@@ -1,4 +1,27 @@
 import collections
+import azure.functions as func
+import random
+import datetime
+
+TEMP_RANGE = (8, 15)
+WIND_SPEED_RANGE = (15, 25)
+HUMIDITY_RANGE = (40, 70)
+CO2_RANGE = (500, 1500)
+
+def generate(n) -> func.SqlRowList:
+	"""Generate n random sensors."""
+	sensors = func.SqlRowList()
+	timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+	for i in range(n):
+		temperature = random.uniform(*TEMP_RANGE)
+		wind_speed = random.uniform(*WIND_SPEED_RANGE)
+		relative_humidity = random.uniform(*HUMIDITY_RANGE)
+		co2 = random.uniform(*CO2_RANGE)
+
+		sensors.append(Sensor(i, timestamp, temperature, wind_speed, relative_humidity, co2))
+
+	return sensors
 
 class Sensor(collections.UserDict):
 	"""Class to represent a sensor."""

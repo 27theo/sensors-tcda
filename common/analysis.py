@@ -1,5 +1,9 @@
 import collections
 
+import azure.functions as func
+
+FIELDS = ["temperature", "wind_speed", "relative_humidity", "co2"]
+
 class AnalysisEntry(collections.UserDict):
 	"""Class to represent a sensor."""
 	def __init__(self, sensor_id, temperature: dict, wind_speed: dict, relative_humidity: dict, co2: dict):
@@ -12,6 +16,31 @@ class AnalysisEntry(collections.UserDict):
 			self["wind_speed_" + value] = wind_speed[value]
 			self["relative_humidity_" + value] = relative_humidity[value]
 			self["co2_" + value] = co2[value]
+
+def analyse(readings: func.SqlRowList) -> dict:
+	"""Calculate analytics from the given readings."""
+	calcs = {}
+
+	for row in readings:
+		item = row.data
+		id = item["sensor_id"]
+
+		if item["sensor_id"] not in calcs:
+			calcs[id] = {f: dict(total=0, minimum=9999, maximum=0, readings=0) for f in FIELDS}
+			for field in FIELDS:
+				calcs[id][field]["readings"] += 1
+				calcs[id][field]["total"] += item[field]
+				if item[field] < calcs[id][field]["minimum"]:
+					calcs[id][field]["minimum"] = item[field]
+				if item[field] > calcs[id][field]["maximum"]:
+					calcs[id][field]["maximum"] = item[field]
+
+	# Calculate averages
+	for id in calcs:
+		for field in FIELDS:
+			calcs[id][field]["average"] = calcs[id][field]["total"] / calcs[id][field]["readings"]
+	
+	return calcs
 
 """
 create table analytics(
